@@ -1,0 +1,42 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/magnusrodseth/projects/GameOfLife/include/Cell.h
+ostream
+-
+
+/Users/magnusrodseth/projects/GameOfLife/include/Random.h
+random
+-
+chrono
+-
+type_traits
+-
+cassert
+-
+initializer_list
+-
+utility
+-
+algorithm
+-
+iterator
+-
+limits
+-
+ostream
+-
+istream
+-
+
+/Users/magnusrodseth/projects/GameOfLife/src/Cell.cpp
+../include/Cell.h
+/Users/magnusrodseth/projects/GameOfLife/include/Cell.h
+../include/Random.h
+/Users/magnusrodseth/projects/GameOfLife/include/Random.h
+
