@@ -4,6 +4,7 @@
 
 #include <thread>
 #include <vector>
+#include <iostream>
 #include "../include/Grid.h"
 
 Grid::Grid(int rows, int columns) : rows(rows), columns(columns) {
@@ -52,9 +53,22 @@ void Grid::update() {
 
     for (int row = 0; row < this->rows; row++) {
         for (int col = 0; col < this->columns; col++) {
-            Cell &cell = grid[row][col];
+            int aliveNeighborsCount = this->getAliveNeighborsCount(row, col);
 
-            this->updateNeighbors(next, cell);
+            // Any live cell with fewer than two live neighbours dies, as if by underpopulation.
+            // Any live cell with more than three live neighbours dies, as if by overpopulation.
+            if (grid[row][col].isAlive() && (aliveNeighborsCount < 2 || aliveNeighborsCount > 3)) {
+                next[grid[row][col].getY()][grid[row][col].getX()].kill();
+                return;
+            }
+
+            // Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
+            if (!grid[row][col].isAlive() && aliveNeighborsCount == 3) {
+                next[grid[row][col].getY()][grid[row][col].getX()].resurrect();
+                return;
+            }
+
+            // Any live cell with two or three live neighbours lives on to the next generation.
         }
     }
 
@@ -62,17 +76,16 @@ void Grid::update() {
     this->grid = next;
 }
 
-void Grid::updateNeighbors(Cell **grid, Cell &cell) {
+int Grid::getAliveNeighborsCount(int row, int col) {
     int aliveNeighborsCount = 0;
-
-    for (int y = cell.getY() - 1; y <= cell.getY() + 1; y++) {
+    for (int y = this->grid[row][col].getY() - 1; y <= this->grid[row][col].getY() + 1; y++) {
         // Coordinates are out of bounds
         if (y < 0 || y >= this->rows) {
             continue;
         }
-        for (int x = cell.getX() + 1; x <= cell.getX() + 1; x++) {
-            // Only care about the 8 neighbours the current cell
-            if (x == cell.getX() && y == cell.getY()) {
+        for (int x = this->grid[row][col].getX() - 1; x <= this->grid[row][col].getX() + 1; x++) {
+            // Only care about the 8 neighbours the current grid[row][col]
+            if (x == this->grid[row][col].getX() && y == this->grid[row][col].getY()) {
                 continue;
             }
             // Coordinates are out of bounds
@@ -86,17 +99,5 @@ void Grid::updateNeighbors(Cell **grid, Cell &cell) {
         }
     }
 
-    // Any dead cell with three live neighbours becomes a live cell.
-    if (!cell.isAlive() && aliveNeighborsCount == 3) {
-        grid[cell.getY()][cell.getX()].resurrect();
-        return;
-    }
-
-    // Any live cell with two or three live neighbours survives.
-    if (cell.isAlive() && (aliveNeighborsCount >= 2 && aliveNeighborsCount <= 3)) {
-        return;
-    }
-
-    // All other live cells die in the next generation. Similarly, all other dead cells stay dead.
-    grid[cell.getY()][cell.getX()].kill();
+    return aliveNeighborsCount;
 }

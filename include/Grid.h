@@ -14,8 +14,6 @@ class Grid {
     int columns;
     Cell **grid{};
 
-    void updateNeighbors(Cell ** grid, Cell &cell);
-
 public:
     Grid(int rows, int columns);
 
@@ -24,6 +22,8 @@ public:
     void update();
 
     friend std::ostream &operator<<(std::ostream &os, const Grid &grid);
+
+    int getAliveNeighborsCount(int row, int col);
 };
 
 

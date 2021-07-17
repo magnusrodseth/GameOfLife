@@ -44,11 +44,11 @@ Cell::Cell() {
     this->y = 0;
 
     // Randomly determine a cell's alive state
-    this->alive = 1 < Random::get(0, 1);
+    this->alive = 1 < Random::get(0, 3);
 }
 
 int Cell::getX() const {
-    return x;
+    return this->x;
 }
 
 int Cell::getY() const {
@@ -56,5 +56,5 @@ int Cell::getY() const {
 }
 
 int Cell::isAlive() const {
-    return alive;
+    return this->alive;
 }
